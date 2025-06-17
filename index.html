@@ -3,54 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dokumentasi SQL Lengkap dan Kompleks</title>
+  <title>Dokumentasi SQL</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       darkMode: 'class',
     }
   </script>
-  <style>
-    .gradient-bg {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    }
-    .card-hover {
-      transition: all 0.3s ease;
-    }
-    .card-hover:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    }
-  </style>
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen" id="home">
-  <header class="gradient-bg text-white p-8 shadow-2xl">
-    <div class="max-w-6xl mx-auto">
-      <h1 class="text-4xl font-bold mb-2">🚀 Dokumentasi SQL Master Class</h1>
-      <p class="text-xl text-gray-200">Panduan lengkap dan kompleks untuk DDL, DML, JOIN, Subquery, Functions, dan Advanced SQL</p>
-    </div>
-  </header>
+<body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">
 
-  <nav class="bg-gray-800 sticky top-0 z-50 shadow-lg">
-    <div class="max-w-6xl mx-auto px-4">
-      <div class="flex space-x-8 py-4 overflow-x-auto">
-        <a href="#home" class="text-blue-400 hover:text-blue-300 whitespace-nowrap">HOME</a>
-        <a href="#ddl" class="text-blue-400 hover:text-blue-300 whitespace-nowrap">DDL</a>
-        <a href="#dml" class="text-blue-400 hover:text-blue-300 whitespace-nowrap">DML & CRUD</a>
-      </div>
-    </div>
-  </nav>
+  <div class="flex">
+    <aside class="w-64 bg-gray-100 dark:bg-gray-800 h-screen px-6 py-8 sticky top-0 overflow-y-auto">
+      <h1 class="text-2xl font-bold mb-6">SQL Docs</h1>
+      <nav class="space-y-2 text-sm">
+        <a href="#ddl" class="block px-3 py-2 rounded hover:bg-blue-100 dark:hover:bg-gray-700">DDL</a>
+        <a href="#dml" class="block px-3 py-2 rounded hover:bg-blue-100 dark:hover:bg-gray-700">DML & CRUD</a>
+        <a href="#tips" class="block px-3 py-2 rounded hover:bg-blue-100 dark:hover:bg-gray-700">Tips</a>
+      </nav>
+    </aside>
 
-  <main class="p-6 max-w-6xl mx-auto space-y-16">
-
-    <!-- DDL Advanced -->
-    <section id="ddl" class="card-hover bg-gray-800 p-6 rounded-lg shadow-xl">
-      <h2 class="text-3xl font-bold mb-6 text-blue-400">🏗️ DDL (Data Definition Language)</h2>
-      
-      <div class="space-y-8">
-        <div>
-          <h3 class="text-xl font-semibold mb-4 text-cyan-400">CRUD Database and Table menggunakan query</h3>
-            <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700">
+    <main class="flex-1 p-10 space-y-16">
+      <section id="ddl">
+        <h2 class="text-3xl font-bold mb-4 border-b border-gray-300 pb-2">🏗️ DDL (Data Definition Language)</h2>
+        <div class="space-y-6">
+          <div>
+            <h3 class="text-xl font-semibold">CRUD Database dan Tabel</h3>
+            <pre class="bg-gray-800 text-green-300 p-4 rounded overflow-auto text-sm">
 <code>
 • Membuat Tabel Baru
 -------------------------------------------------------------------------------------------
@@ -67,29 +46,24 @@
 -------------------------------------------------------------------------------------------
             nama table              field lama    field baru      tipe data
 ALTER TABLE kendaraan_rodhi CHANGE jeni_kendaraan jenis_kendaraan VARCHAR (10) NOT NULL;
-
-
-
-
-
-
-
-              </code>              
+              </code> 
             </pre>
+          </div>
         </div>
-      </div>
+      </section>
 
-       
-
-    <!-- DML Advanced -->
-    <section id="dml" class="card-hover bg-gray-800 p-6 rounded-lg shadow-xl">
-      <h2 class="text-3xl font-bold mb-6 text-green-400">📝 DML (Data Manipulation Language) - Advanced</h2>
-      
-      <div class="space-y-8">
-        <div>
-          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Insert Data Kompleks</h3>
-            <pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700">
+      <section id="dml">
+        <h2 class="text-3xl font-bold mb-4 border-b border-gray-300 pb-2">📝 DML (Data Manipulation Language)</h2>
+        <div class="space-y-6">
+          <div>
+            <h3 class="text-xl font-semibold">Manipulasi Data</h3>
+            <pre class="bg-gray-800 text-green-300 p-4 rounded overflow-auto text-sm">
 <code>
+• Melihat data
+--------------------------------------------------------------------------------------------------------------
+ SELECT * FROM nama_tabel;                                      (untuk melihat semua data)
+ SELECT * FROM nama_tabel WHERE jenis_kendaraan = 'mobil';      (melihat data dengan filter)  
+
 • Menambahkan data
 --------------------------------------------------------------------------------------------------------------
 INSERT INTO kendaraan_rodhi(plat_nomor, nama_kendaraan, jenis_kendaraan, keterangan, kondisi_akhir) VALUES
@@ -109,130 +83,38 @@ DELETE FROM nama_tabel WHERE plat_nomor = 'B7654FWA';
 
 </code>
             </pre>
+          </div>
         </div>
-      </div>
+      </section>
 
-      
+      <section id="tips">
+        <h2 class="text-3xl font-bold mb-4 border-b border-gray-300 pb-2">⚡ Best Practices & Performance</h2>
+        <div class="grid md:grid-cols-2 gap-6 text-sm">
+          <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded">
+            <h3 class="font-semibold text-cyan-400 mb-2">Query Optimization</h3>
+            <ul class="list-disc ml-5 space-y-1">
+              <li>Gunakan LIMIT untuk membatasi hasil</li>
+              <li>Hindari SELECT * pada tabel besar</li>
+              <li>Gunakan EXISTS daripada IN untuk subquery</li>
+              <li>Buat index pada kolom yang sering di-filter</li>
+              <li>Gunakan UNION ALL daripada UNION jika duplikat tidak masalah</li>
+            </ul>
+          </div>
 
-    <!-- Performance Tips -->
-    <section class="card-hover bg-gray-800 p-6 rounded-lg shadow-xl">
-      <h2 class="text-3xl font-bold mb-6 text-green-400">⚡ Performance Tips & Best Practices</h2>
-      
-      <div class="grid md:grid-cols-2 gap-6">
-        <div class="bg-gray-900 p-4 rounded">
-          <h3 class="font-bold text-cyan-400 mb-3">Query Optimization</h3>
-          <ul class="space-y-2 text-sm text-gray-300">
-            <li>• Gunakan LIMIT untuk membatasi hasil</li>
-            <li>• Hindari SELECT * pada tabel besar</li>
-            <li>• Gunakan EXISTS daripada IN untuk subquery</li>
-            <li>• Buat index pada kolom yang sering di-filter</li>
-            <li>• Gunakan UNION ALL daripada UNION jika duplikat tidak masalah</li>
-          </ul>
+          <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded">
+            <h3 class="font-semibold text-cyan-400 mb-2">Index Strategy</h3>
+            <ul class="list-disc ml-5 space-y-1">
+              <li>Index kolom yang sering di WHERE clause</li>
+              <li>Composite index: kolom paling selektif di depan</li>
+              <li>Jangan over-index (lambatkan INSERT/UPDATE)</li>
+              <li>Monitor penggunaan index dengan EXPLAIN</li>
+              <li>Drop index yang tidak terpakai</li>
+            </ul>
+          </div>
         </div>
-        
-        <div class="bg-gray-900 p-4 rounded">
-          <h3 class="font-bold text-cyan-400 mb-3">Index Strategy</h3>
-          <ul class="space-y-2 text-sm text-gray-300">
-            <li>• Index kolom yang sering di WHERE clause</li>
-            <li>• Composite index: kolom paling selektif di depan</li>
-            <li>• Jangan over-index (lambatkan INSERT/UPDATE)</li>
-            <li>• Monitor penggunaan index dengan EXPLAIN</li>
-            <li>• Drop index yang tidak terpakai</li>
-          </ul>
-        </div>
-        
-        <div class="bg-gray-900 p-4 rounded">
-          <h3 class="font-bold text-cyan-400 mb-3">JOIN Optimization</h3>
-          <ul class="space-y-2 text-sm text-gray-300">
-            <li>• Gunakan INNER JOIN jika memungkinkan</li>
-            <li>• Filter di WHERE clause untuk INNER JOIN</li>
-            <li>• Filter di ON clause untuk OUTER JOIN</li>
-            <li>• Urutan JOIN mempengaruhi performa</li>
-            <li>• Gunakan alias untuk readability</li>
-          </ul>
-        </div>
-        
-        <div class="bg-gray-900 p-4 rounded">
-          <h3 class="font-bold text-cyan-400 mb-3">Database Design</h3>
-          <ul class="space-y-2 text-sm text-gray-300">
-            <li>• Normalisasi untuk mengurangi redundansi</li>
-            <li>• Denormalisasi untuk performa baca</li>
-            <li>• Gunakan tipe data yang tepat</li>
-            <li>• Constraint untuk integritas data</li>
-            <li>• Partitioning untuk tabel besar</li>
-          </ul>
-        </div>
-      </div>
-    </section>
+      </section>
+    </main>
+  </div>
 
-  </main>
-
-  <footer class="gradient-bg text-white p-8 text-center border-t border-gray-700">
-    <div class="max-w-6xl mx-auto">
-      <p class="text-lg mb-2">&copy; 2025 | S N O O Z E X</p>
-      <p class="text-gray-300">Semakin kamu tau, semakin kamu tidak tau</p>
-      <div class="mt-4 flex justify-center space-x-4">
-        <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">MySQL</span>
-        <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">PostgreSQL</span>
-        <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">SQL Server</span>
-        <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">Oracle</span>
-      </div>
-    </div>
-  </footer>
-
-  <script>
-    // Smooth scrolling for navigation links
-    document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-          target.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      });
-    });
-
-    // Add intersection observer for navigation highlighting
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('nav a[href^="#"]');
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          navLinks.forEach(link => {
-            link.classList.remove('text-yellow-400');
-            link.classList.add('text-blue-400');
-            if (link.getAttribute('href') === `#${entry.target.id}`) {
-              link.classList.remove('text-blue-400');
-              link.classList.add('text-yellow-400');
-            }
-          });
-        }
-      });
-    }, { threshold: 0.3 });
-
-    sections.forEach(section => observer.observe(section));
-
-    // Copy code functionality
-    document.querySelectorAll('pre code').forEach(block => {
-      const button = document.createElement('button');
-      button.className = 'absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs opacity-75 hover:opacity-100';
-      button.textContent = 'Copy';
-      
-      const pre = block.parentElement;
-      pre.style.position = 'relative';
-      pre.appendChild(button);
-      
-      button.addEventListener('click', () => {
-        navigator.clipboard.writeText(block.textContent).then(() => {
-          button.textContent = 'Copied!';
-          setTimeout(() => button.textContent = 'Copy', 2000);
-        });
-      });
-    });
-  </script>
 </body>
 </html>
