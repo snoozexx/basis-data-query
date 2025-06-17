@@ -31,14 +31,31 @@
             <h3 class="text-xl font-semibold">CRUD Database dan Tabel</h3>
             <pre class="bg-gray-800 text-green-300 p-4 rounded overflow-auto text-sm">
 <code>
+---------------DATABASE-----------------
+• Membuat Database Baru
+-------------------------------------------------------------------------------------------
+ CREATE DATABASE nama_database;
+
+• Menggunakan Database
+-------------------------------------------------------------------------------------------
+  USE nama_database;
+
+
+-----------------TABLE------------------
 • Membuat Tabel Baru
 -------------------------------------------------------------------------------------------
-  CREATE TABLE kendaraan_rodhi (
-  plat_nomor VARCHAR (8) PRIMARY KEY NOT NULL,
+CREATE TABLE jenis_kendaraan (
+  id VARCHAR (10) PRIMARY KEY UNIQUE NOT NULL,
+  nama_jenis VARCHAR (50) NOT NULL
+);
+
+CREATE TABLE kendaraan_rodhi (
+  plat_nomor VARCHAR (8) PRIMARY KEY UNIQUE NOT NULL, #AUTO INCREMENT
   nama_kendaraan VARCHAR (25) NOT NULL,
-  jeni_kendaraan VARCHAR (10) NOT NULL,
+  id_jenis_kendaraan VARCHAR (10) NOT NULL,
   keterangan VARCHAR (250),
-  kondisi_akhir VARCHAR (5) NOT NULL
+  kondisi_akhir VARCHAR (5) NOT NULL,
+  FOREIGN KEY (id_jenis_kendaraan) REFERENCES jenis_kendaraan(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 
@@ -46,7 +63,11 @@
 -------------------------------------------------------------------------------------------
             nama table              field lama    field baru      tipe data
 ALTER TABLE kendaraan_rodhi CHANGE jeni_kendaraan jenis_kendaraan VARCHAR (10) NOT NULL;
-              </code> 
+
+- menambahkan relasi ke id foreign key
+ALTER TABLE nama_tabel ADD FOREIGN KEY (id_fk_ditabel) REFERENCES nama_tabel_relasi(id_tabel_relasi);
+ALTER TABLE nama_tabel ADD CONSTRAINT nama_lain FOREIGN KEY (id_fk_ditabel) REFERENCES nama_tabel_relasi(id_tabel_relasi);
+</code> 
             </pre>
           </div>
         </div>
@@ -63,6 +84,9 @@ ALTER TABLE kendaraan_rodhi CHANGE jeni_kendaraan jenis_kendaraan VARCHAR (10) N
 --------------------------------------------------------------------------------------------------------------
  SELECT * FROM nama_tabel;                                      (untuk melihat semua data)
  SELECT * FROM nama_tabel WHERE jenis_kendaraan = 'mobil';      (melihat data dengan filter)  
+ SELECT nama_field, nama_field FROM nama_tabel;                 (melihat data dengan tampilan tertentu)
+ SELECT mahasiswa.nama_mhs, transaksi_nilai.nilai_akhir from transaksi_nilai join mahasiswa on transaksi_nilai.id_mhs = mahasiswa.Id_mhs;
+ (melihat data tampilan tertentu dengan join tabel)
 
 • Menambahkan data
 --------------------------------------------------------------------------------------------------------------
