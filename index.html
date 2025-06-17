@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dokumentasi SQL Lengkap dan Kompleks</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <style>
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .card-hover {
+      transition: all 0.3s ease;
+    }
+    .card-hover:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body class="bg-gray-900 text-gray-100 min-h-screen" id="home">
+  <header class="gradient-bg text-white p-8 shadow-2xl">
+    <div class="max-w-6xl mx-auto">
+      <h1 class="text-4xl font-bold mb-2">🚀 Dokumentasi SQL Master Class</h1>
+      <p class="text-xl text-gray-200">Panduan lengkap dan kompleks untuk DDL, DML, JOIN, Subquery, Functions, dan Advanced SQL</p>
+    </div>
+  </header>
+
+  <nav class="bg-gray-800 sticky top-0 z-50 shadow-lg">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="flex space-x-8 py-4 overflow-x-auto">
+        <a href="#home" class="text-blue-400 hover:text-blue-300 whitespace-nowrap">HOME</a>
+        <a href="#ddl" class="text-blue-400 hover:text-blue-300 whitespace-nowrap">DDL</a>
+        <a href="#dml" class="text-blue-400 hover:text-blue-300 whitespace-nowrap">DML & CRUD</a>
+        <a href="#joins" class="text-blue-400 hover:text-blue-300 whitespace-nowrap">Advanced JOIN</a>
+        <a href="#subquery" class="text-blue-400 hover:text-blue-300 whitespace-nowrap">Subquery</a>
+        <a href="#functions" class="text-blue-400 hover:text-blue-300 whitespace-nowrap">Functions</a>
+        <a href="#advanced" class="text-blue-400 hover:text-blue-300 whitespace-nowrap">Advanced SQL</a>
+        <a href="#indexes" class="text-blue-400 hover:text-blue-300 whitespace-nowrap">Indexes</a>
+        <a href="#transactions" class="text-blue-400 hover:text-blue-300 whitespace-nowrap">Transactions</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="p-6 max-w-6xl mx-auto space-y-16">
+    
+    <!-- Schema Setup -->
+    <section class="card-hover bg-gray-800 p-6 rounded-lg shadow-xl">
+      <h2 class="text-3xl font-bold mb-6 text-yellow-400">📊 Schema Database Contoh</h2>
+      <p class="mb-6 text-gray-300">Mari kita buat struktur database yang kompleks untuk universitas:</p>
+      
+<pre class="bg-gray-900 text-green-300 p-6 rounded-lg overflow-auto border border-gray-700"><code>-- Tabel Jurusan
+CREATE TABLE jurusan (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nama_jurusan VARCHAR(100) NOT NULL,
+  fakultas VARCHAR(100) NOT NULL,
+  akreditasi ENUM('A', 'B', 'C') DEFAULT 'B',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabel Dosen
+CREATE TABLE dosen (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nama VARCHAR(100) NOT NULL,
+  nip VARCHAR(20) UNIQUE NOT NULL,
+  email VARCHAR(100) UNIQUE,
+  jurusan_id INT,
+  jabatan ENUM('Asisten Ahli', 'Lektor', 'Lektor Kepala', 'Guru Besar'),
+  gaji DECIMAL(15,2),
+  tanggal_lahir DATE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (jurusan_id) REFERENCES jurusan(id) ON DELETE SET NULL
+);
+
+-- Tabel Mahasiswa
+CREATE TABLE mahasiswa (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  nim VARCHAR(15) UNIQUE NOT NULL,
+  nama VARCHAR(100) NOT NULL,
+  jurusan_id INT,
+  dosen_pembimbing_id INT NULL,
+  semester INT DEFAULT 1,
+  ipk DECIMAL(3,2) DEFAULT 0.00,
+  status ENUM('Aktif', 'Cuti', 'Lulus', 'Drop Out') DEFAULT 'Aktif',
+  tanggal_masuk DATE,
+  alamat TEXT,
+  telepon VARCHAR(15),
+  email VARCHAR(100),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (jurusan_id) REFERENCES jurusan(id) ON DELETE SET NULL,
+  FOREIGN KEY (dosen_pembimbing_id) REFERENCES dosen(id) ON DELETE SET NULL
+);
+
+-- Tabel Mata Kuliah
+CREATE TABLE mata_kuliah (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  kode_mk VARCHAR(10) UNIQUE NOT NULL,
+  nama_mk VARCHAR(100) NOT NULL,
+  sks INT NOT NULL,
+  semester_min INT DEFAULT 1,
+  jurusan_id INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (jurusan_id) REFERENCES jurusan(id) ON DELETE CASCADE
+);
+
+-- Tabel Kelas
+CREATE TABLE kelas (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  mata_kuliah_id INT,
+  dosen_id INT,
+  kode_kelas VARCHAR(10) NOT NULL,
+  ruang VARCHAR(20),
+  hari ENUM('Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'),
+  jam_mulai TIME,
+  jam_selesai TIME,
+  semester_tahun VARCHAR(10),
+  kapasitas INT DEFAULT 40,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (mata_kuliah_id) REFERENCES mata_kuliah(id) ON DELETE CASCADE,
+  FOREIGN KEY (dosen_id) REFERENCES dosen(id) ON DELETE SET NULL
+);
+
+-- Tabel KRS (Kartu Rencana Studi)
+CREATE TABLE krs (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  mahasiswa_id INT,
+  kelas_id INT,
+  semester_tahun VARCHAR(10),
+  status ENUM('Diambil', 'Lulus', 'Tidak Lulus', 'Mengulang') DEFAULT 'Diambil',
+  nilai_angka DECIMAL(5,2) NULL,
+  nilai_huruf ENUM('A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-', 'D+', 'D', 'E') NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (mahasiswa_id) REFERENCES mahasiswa(id) ON DELETE CASCADE,
+  FOREIGN KEY (kelas_id) REFERENCES kelas(id) ON DELETE CASCADE,
+  UNIQUE KEY unique_mahasiswa_kelas (mahasiswa_id, kelas_id)
+);</code></pre>
+    </section>
+
+    <!-- DDL Advanced -->
+    <section id="ddl" class="card-hover bg-gray-800 p-6 rounded-lg shadow-xl">
+      <h2 class="text-3xl font-bold mb-6 text-blue-400">🏗️ DDL (Data Definition Language)</h2>
+      
+      <div class="space-y-8">
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">CRUD Database and Table menggunakan query</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- ===============================
+-- CREATE DATABASE dan TABLE
+-- ===============================
+CREATE DATABASE kampus;
+USE kampus;
+
+CREATE TABLE mahasiswa (
+    mahasiswa_id INT PRIMARY KEY AUTO_INCREMENT,
+    nama VARCHAR(100),
+    jurusan_id INT,
+    semester INT,
+    ipk DECIMAL(3,2)
+);
+
+CREATE TABLE jurusan (
+    jurusan_id INT PRIMARY KEY AUTO_INCREMENT,
+    nama_jurusan VARCHAR(100)
+);
+
+-- ===============================
+-- ALTER DATABASE dan TABLE
+-- ===============================
+
+-- ALTER DATABASE (ubah karakter set misalnya)
+ALTER DATABASE kampus CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- ALTER TABLE (menambah kolom)
+ALTER TABLE mahasiswa ADD email VARCHAR(100);
+
+-- ALTER TABLE (mengubah tipe data)
+ALTER TABLE mahasiswa MODIFY ipk DECIMAL(4,2);
+
+-- ALTER TABLE (mengganti nama kolom)
+ALTER TABLE mahasiswa CHANGE nama nama_lengkap VARCHAR(100);
+
+-- ALTER TABLE (menghapus kolom)
+ALTER TABLE mahasiswa DROP COLUMN email;
+
+-- ALTER TABLE (menambah constraint)
+ALTER TABLE mahasiswa 
+ADD CONSTRAINT chk_ipk CHECK (ipk >= 0.00 AND ipk <= 4.00),
+ADD CONSTRAINT chk_semester CHECK (semester >= 1 AND semester <= 14);
+
+-- ===============================
+-- DROP DATABASE dan TABLE
+-- ===============================
+
+-- DROP TABLE
+DROP TABLE IF EXISTS mahasiswa;
+DROP TABLE IF EXISTS jurusan;
+
+-- DROP DATABASE
+DROP DATABASE IF EXISTS kampus;
+
+</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Views dan Stored Procedures</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Membuat View
+CREATE VIEW view_mahasiswa_detail AS
+SELECT 
+  m.nim, m.nama, m.semester, m.ipk, m.status,
+  j.nama_jurusan, j.fakultas,
+  d.nama AS dosen_pembimbing
+FROM mahasiswa m
+LEFT JOIN jurusan j ON m.jurusan_id = j.id
+LEFT JOIN dosen d ON m.dosen_pembimbing_id = d.id
+WHERE m.status = 'Aktif';
+
+-- Stored Procedure untuk menghitung IPK
+DELIMITER //
+CREATE PROCEDURE HitungIPK(IN mahasiswa_id_param INT)
+BEGIN
+  DECLARE total_sks INT DEFAULT 0;
+  DECLARE total_bobot DECIMAL(10,2) DEFAULT 0;
+  DECLARE ipk_baru DECIMAL(3,2) DEFAULT 0;
+  
+  SELECT 
+    SUM(mk.sks),
+    SUM(mk.sks * 
+      CASE krs.nilai_huruf
+        WHEN 'A' THEN 4.00
+        WHEN 'A-' THEN 3.75
+        WHEN 'B+' THEN 3.50
+        WHEN 'B' THEN 3.00
+        WHEN 'B-' THEN 2.75
+        WHEN 'C+' THEN 2.50
+        WHEN 'C' THEN 2.00
+        WHEN 'C-' THEN 1.75
+        WHEN 'D+' THEN 1.50
+        WHEN 'D' THEN 1.00
+        ELSE 0
+      END
+    )
+  INTO total_sks, total_bobot
+  FROM krs
+  JOIN kelas k ON krs.kelas_id = k.id
+  JOIN mata_kuliah mk ON k.mata_kuliah_id = mk.id
+  WHERE krs.mahasiswa_id = mahasiswa_id_param 
+    AND krs.status = 'Lulus'
+    AND krs.nilai_huruf IS NOT NULL;
+  
+  IF total_sks > 0 THEN
+    SET ipk_baru = total_bobot / total_sks;
+    UPDATE mahasiswa SET ipk = ipk_baru WHERE id = mahasiswa_id_param;
+  END IF;
+END //
+DELIMITER ;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- DML Advanced -->
+    <section id="dml" class="card-hover bg-gray-800 p-6 rounded-lg shadow-xl">
+      <h2 class="text-3xl font-bold mb-6 text-green-400">📝 DML (Data Manipulation Language) - Advanced</h2>
+      
+      <div class="space-y-8">
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Insert Data Kompleks</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>
+-- ===============================
+-- INSERT (DML)
+-- ===============================
+INSERT INTO jurusan (nama_jurusan)
+VALUES 
+('Teknik Informatika'),
+('Sistem Informasi');
+
+INSERT INTO mahasiswa (nama_lengkap, jurusan_id, semester, ipk)
+VALUES 
+('Andi Nugroho', 1, 5, 3.45),
+('Rina Kusuma', 2, 3, 3.80),
+('Dedi Firmansyah', 1, 7, 2.95);
+
+-- ===============================
+-- SELECT (DML)
+-- ===============================
+-- Tampilkan semua mahasiswa
+SELECT * FROM mahasiswa;
+
+-- Tampilkan mahasiswa dengan IPK di atas 3.5
+SELECT nama_lengkap, ipk FROM mahasiswa
+WHERE ipk > 3.5;
+
+-- JOIN mahasiswa dan jurusan
+SELECT m.nama_lengkap, j.nama_jurusan, m.semester, m.ipk
+FROM mahasiswa m
+JOIN jurusan j ON m.jurusan_id = j.jurusan_id;
+
+-- ===============================
+-- UPDATE (DML)
+-- ===============================
+-- Update IPK mahasiswa bernama 'Rina Kusuma'
+UPDATE mahasiswa
+SET ipk = 3.90
+WHERE nama_lengkap = 'Rina Kusuma';
+
+-- ===============================
+-- DELETE (DML)
+-- ===============================
+-- Hapus mahasiswa dengan semester di atas 10
+DELETE FROM mahasiswa
+WHERE id = 10;
+
+  
+  -- Insert dengan subquery
+INSERT INTO mahasiswa (nim, nama, jurusan_id, tanggal_masuk, email)
+SELECT 
+  CONCAT('2024', LPAD(ROW_NUMBER() OVER(), 6, '0')),
+  CONCAT('Mahasiswa ', ROW_NUMBER() OVER()),
+  j.id,
+  '2024-09-01',
+  CONCAT('mhs', ROW_NUMBER() OVER(), '@university.ac.id')
+FROM (SELECT 1 as dummy UNION SELECT 2 UNION SELECT 3) dummy_table
+CROSS JOIN jurusan j
+WHERE j.akreditasi = 'A';
+
+-- Insert dengan ON DUPLICATE KEY UPDATE
+INSERT INTO dosen (nip, nama, email, jurusan_id, jabatan, gaji)
+VALUES 
+  ('198501001', 'Dr. Ahmad Wijaya', 'ahmad@univ.ac.id', 1, 'Lektor Kepala', 12000000.00),
+  ('198502002', 'Prof. Siti Rahayu', 'siti@univ.ac.id', 2, 'Guru Besar', 15000000.00)
+ON DUPLICATE KEY UPDATE
+  nama = VALUES(nama),
+  email = VALUES(email),
+  gaji = VALUES(gaji);</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Update dan Delete Kompleks</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Update dengan JOIN
+UPDATE mahasiswa m
+JOIN jurusan j ON m.jurusan_id = j.id
+SET m.status = 'Cuti'
+WHERE j.akreditasi = 'C' AND m.ipk < 2.00;
+
+-- Update dengan subquery
+UPDATE mahasiswa 
+SET dosen_pembimbing_id = (
+  SELECT d.id FROM dosen d 
+  WHERE d.jurusan_id = mahasiswa.jurusan_id 
+  ORDER BY RAND() 
+  LIMIT 1
+)
+WHERE dosen_pembimbing_id IS NULL;
+
+-- Delete dengan JOIN
+DELETE krs FROM krs
+JOIN kelas k ON krs.kelas_id = k.id
+JOIN mata_kuliah mk ON k.mata_kuliah_id = mk.id
+WHERE mk.sks = 0 OR krs.created_at < DATE_SUB(NOW(), INTERVAL 2 YEAR);</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">UPSERT dan Batch Operations</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- REPLACE (MySQL specific)
+REPLACE INTO mata_kuliah (kode_mk, nama_mk, sks, jurusan_id)
+VALUES 
+  ('IF101', 'Algoritma dan Pemrograman', 3, 1),
+  ('IF102', 'Struktur Data', 3, 1),
+  ('SI101', 'Sistem Basis Data', 3, 2);
+
+-- Batch insert dengan VALUES
+INSERT INTO krs (mahasiswa_id, kelas_id, semester_tahun) 
+VALUES 
+  (1, 1, '2024/1'), (1, 2, '2024/1'), (1, 3, '2024/1'),
+  (2, 1, '2024/1'), (2, 4, '2024/1'), (2, 5, '2024/1'),
+  (3, 2, '2024/1'), (3, 3, '2024/1'), (3, 6, '2024/1');</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Advanced JOIN -->
+    <section id="joins" class="card-hover bg-gray-800 p-6 rounded-lg shadow-xl">
+      <h2 class="text-3xl font-bold mb-6 text-purple-400">🔗 Advanced JOIN Operations</h2>
+      
+      <div class="space-y-8">
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Multiple Table JOINs</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- JOIN 5 tabel untuk mendapatkan detail lengkap KRS
+SELECT 
+  m.nim, m.nama AS nama_mahasiswa,
+  j.nama_jurusan, j.fakultas,
+  mk.kode_mk, mk.nama_mk, mk.sks,
+  d.nama AS nama_dosen,
+  k.kode_kelas, k.ruang, k.hari, k.jam_mulai, k.jam_selesai,
+  krs.nilai_huruf, krs.status AS status_krs
+FROM mahasiswa m
+JOIN jurusan j ON m.jurusan_id = j.id
+JOIN krs ON m.id = krs.mahasiswa_id
+JOIN kelas k ON krs.kelas_id = k.id
+JOIN mata_kuliah mk ON k.mata_kuliah_id = mk.id
+LEFT JOIN dosen d ON k.dosen_id = d.id
+WHERE m.status = 'Aktif' AND krs.semester_tahun = '2024/1'
+ORDER BY m.nim, mk.kode_mk;</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Self JOIN</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Mencari mahasiswa yang memiliki IPK sama
+SELECT 
+  m1.nim AS nim1, m1.nama AS nama1,
+  m2.nim AS nim2, m2.nama AS nama2,
+  m1.ipk
+FROM mahasiswa m1
+JOIN mahasiswa m2 ON m1.ipk = m2.ipk AND m1.id < m2.id
+WHERE m1.ipk > 3.00
+ORDER BY m1.ipk DESC;</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">CROSS JOIN dan Conditional JOINs</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- CROSS JOIN untuk membuat kombinasi
+SELECT 
+  m.nama AS mahasiswa,
+  mk.nama_mk AS mata_kuliah,
+  mk.sks
+FROM mahasiswa m
+CROSS JOIN mata_kuliah mk
+WHERE m.jurusan_id = mk.jurusan_id
+  AND m.semester >= mk.semester_min
+  AND m.status = 'Aktif'
+  AND mk.id NOT IN (
+    SELECT k.mata_kuliah_id 
+    FROM krs krs_check 
+    JOIN kelas k ON krs_check.kelas_id = k.id
+    WHERE krs_check.mahasiswa_id = m.id
+  )
+ORDER BY m.nama, mk.nama_mk;</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Advanced LEFT/RIGHT JOIN dengan Aggregation</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Menampilkan dosen dengan jumlah mahasiswa bimbingan
+SELECT 
+  d.nama AS nama_dosen,
+  d.nip,
+  j.nama_jurusan,
+  COUNT(m.id) AS jumlah_mahasiswa_bimbingan,
+  AVG(m.ipk) AS rata_rata_ipk_bimbingan,
+  GROUP_CONCAT(m.nama SEPARATOR ', ') AS daftar_mahasiswa
+FROM dosen d
+LEFT JOIN mahasiswa m ON d.id = m.dosen_pembimbing_id AND m.status = 'Aktif'
+JOIN jurusan j ON d.jurusan_id = j.id
+GROUP BY d.id, d.nama, d.nip, j.nama_jurusan
+HAVING COUNT(m.id) >= 0
+ORDER BY jumlah_mahasiswa_bimbingan DESC, d.nama;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Subquery -->
+    <section id="subquery" class="card-hover bg-gray-800 p-6 rounded-lg shadow-xl">
+      <h2 class="text-3xl font-bold mb-6 text-red-400">🎯 Subquery dan CTE (Common Table Expression)</h2>
+      
+      <div class="space-y-8">
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Subquery dalam SELECT</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Mahasiswa dengan IPK di atas rata-rata jurusannya
+SELECT 
+  m.nim, m.nama, m.ipk,
+  j.nama_jurusan,
+  (SELECT AVG(m2.ipk) 
+   FROM mahasiswa m2 
+   WHERE m2.jurusan_id = m.jurusan_id AND m2.status = 'Aktif') AS rata_rata_jurusan,
+  (SELECT COUNT(*) 
+   FROM mahasiswa m3 
+   WHERE m3.jurusan_id = m.jurusan_id AND m3.ipk > m.ipk) AS peringkat_dari_bawah
+FROM mahasiswa m
+JOIN jurusan j ON m.jurusan_id = j.id
+WHERE m.ipk > (
+  SELECT AVG(m4.ipk) 
+  FROM mahasiswa m4 
+  WHERE m4.jurusan_id = m.jurusan_id AND m4.status = 'Aktif'
+)
+ORDER BY j.nama_jurusan, m.ipk DESC;</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">EXISTS dan NOT EXISTS</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Dosen yang mengajar di semester ini
+SELECT d.nama, d.nip, j.nama_jurusan
+FROM dosen d
+JOIN jurusan j ON d.jurusan_id = j.id
+WHERE EXISTS (
+  SELECT 1 FROM kelas k 
+  WHERE k.dosen_id = d.id 
+    AND k.semester_tahun = '2024/1'
+);
+
+-- Mata kuliah yang belum pernah diambil mahasiswa
+SELECT mk.kode_mk, mk.nama_mk, mk.sks
+FROM mata_kuliah mk
+WHERE NOT EXISTS (
+  SELECT 1 FROM kelas k
+  JOIN krs ON k.id = krs.kelas_id
+  WHERE k.mata_kuliah_id = mk.id
+);</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">WITH Clause (CTE)</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Menggunakan CTE untuk query kompleks
+WITH mahasiswa_stats AS (
+  SELECT 
+    m.jurusan_id,
+    COUNT(*) AS total_mahasiswa,
+    AVG(m.ipk) AS rata_rata_ipk,
+    MAX(m.ipk) AS ipk_tertinggi,
+    MIN(m.ipk) AS ipk_terendah
+  FROM mahasiswa m
+  WHERE m.status = 'Aktif'
+  GROUP BY m.jurusan_id
+),
+dosen_beban AS (
+  SELECT 
+    d.jurusan_id,
+    COUNT(*) AS total_dosen,
+    COUNT(m.id) AS total_mahasiswa_bimbingan
+  FROM dosen d
+  LEFT JOIN mahasiswa m ON d.id = m.dosen_pembimbing_id
+  GROUP BY d.jurusan_id
+)
+SELECT 
+  j.nama_jurusan,
+  j.fakultas,
+  j.akreditasi,
+  ms.total_mahasiswa,
+  ms.rata_rata_ipk,
+  ms.ipk_tertinggi,
+  db.total_dosen,
+  ROUND(ms.total_mahasiswa / db.total_dosen, 2) AS rasio_mahasiswa_dosen
+FROM jurusan j
+LEFT JOIN mahasiswa_stats ms ON j.id = ms.jurusan_id
+LEFT JOIN dosen_beban db ON j.id = db.jurusan_id
+ORDER BY ms.rata_rata_ipk DESC;</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Recursive CTE</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Contoh hierarki semester (recursive CTE)
+WITH RECURSIVE semester_hierarchy AS (
+  -- Base case
+  SELECT 1 AS semester, 'Semester 1' AS nama_semester, 0 AS parent_semester
+  
+  UNION ALL
+  
+  -- Recursive case
+  SELECT 
+    sh.semester + 1,
+    CONCAT('Semester ', sh.semester + 1),
+    sh.semester
+  FROM semester_hierarchy sh
+  WHERE sh.semester < 8
+)
+SELECT 
+  sh.semester,
+  sh.nama_semester,
+  COUNT(m.id) AS jumlah_mahasiswa
+FROM semester_hierarchy sh
+LEFT JOIN mahasiswa m ON m.semester = sh.semester AND m.status = 'Aktif'
+GROUP BY sh.semester, sh.nama_semester
+ORDER BY sh.semester;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Functions -->
+    <section id="functions" class="card-hover bg-gray-800 p-6 rounded-lg shadow-xl">
+      <h2 class="text-3xl font-bold mb-6 text-yellow-400">⚡ SQL Functions dan Expressions</h2>
+      
+      <div class="space-y-8">
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">String Functions</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>SELECT 
+  m.nama,
+  UPPER(m.nama) AS nama_upper,
+  LOWER(m.nama) AS nama_lower,
+  CONCAT(m.nama, ' - ', j.nama_jurusan) AS nama_lengkap,
+  LENGTH(m.nama) AS panjang_nama,
+  SUBSTRING(m.nim, 1, 4) AS tahun_masuk,
+  REPLACE(m.email, '@university.ac.id', '@alumni.ac.id') AS email_alumni,
+  LEFT(m.nama, 10) AS nama_pendek,
+  TRIM(BOTH ' ' FROM m.alamat) AS alamat_clean
+FROM mahasiswa m
+JOIN jurusan j ON m.jurusan_id = j.id;</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Date Functions</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>SELECT 
+  m.nama,
+  m.tanggal_masuk,
+  YEAR(m.tanggal_masuk) AS tahun_masuk,
+  MONTH(m.tanggal_masuk) AS bulan_masuk,
+  DAYNAME(m.tanggal_masuk) AS hari_masuk,
+  DATEDIFF(NOW(), m.tanggal_masuk) AS hari_kuliah,
+  TIMESTAMPDIFF(YEAR, m.tanggal_masuk, NOW()) AS lama_kuliah_tahun,
+  DATE_ADD(m.tanggal_masuk, INTERVAL 4 YEAR) AS target_lulus,
+  CASE 
+    WHEN TIMESTAMPDIFF(YEAR, m.tanggal_masuk, NOW()) > 4 THEN 'Terlambat'
+    WHEN TIMESTAMPDIFF(YEAR, m.tanggal_masuk, NOW()) = 4 THEN 'Tepat Waktu'
+    ELSE 'Masih Normal'
+  END AS status_studi
+FROM mahasiswa m
+WHERE m.status = 'Aktif';</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Aggregate Functions</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Statistik detail per jurusan
+SELECT 
+  j.nama_jurusan,
+  COUNT(m.id) AS total_mahasiswa,
+  COUNT(CASE WHEN m.status = 'Aktif' THEN 1 END) AS mahasiswa_aktif,
+  COUNT(CASE WHEN m.status = 'Lulus' THEN 1 END) AS mahasiswa_lulus,
+  AVG(m.ipk) AS rata_rata_ipk,
+  STDDEV(m.ipk) AS standar_deviasi_ipk,
+  MIN(m.ipk) AS ipk_terendah,
+  MAX(m.ipk) AS ipk_tertinggi,
+  VARIANCE(m.ipk) AS varians_ipk,
+  COUNT(DISTINCT m.semester) AS sebaran_semester
+FROM jurusan j
+LEFT JOIN mahasiswa m ON j.id = m.jurusan_id
+GROUP BY j.id, j.nama_jurusan
+HAVING COUNT(m.id) > 0
+ORDER BY rata_rata_ipk DESC;</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Window Functions</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Ranking dan analisis dengan window functions
+SELECT 
+  m.nim, m.nama, m.ipk, j.nama_jurusan,
+  ROW_NUMBER() OVER (ORDER BY m.ipk DESC) AS ranking_global,
+  RANK() OVER (PARTITION BY m.jurusan_id ORDER BY m.ipk DESC) AS ranking_jurusan,
+  DENSE_RANK() OVER (PARTITION BY m.jurusan_id ORDER BY m.ipk DESC) AS dense_ranking_jurusan,
+  NTILE(4) OVER (PARTITION BY m.jurusan_id ORDER BY m.ipk DESC) AS quartile,
+  LAG(m.ipk, 1) OVER (PARTITION BY m.jurusan_id ORDER BY m.ipk DESC) AS ipk_sebelumnya,
+  LEAD(m.ipk, 1) OVER (PARTITION BY m.jurusan_id ORDER BY m.ipk DESC) AS ipk_selanjutnya,
+  FIRST_VALUE(m.ipk) OVER (PARTITION BY m.jurusan_id ORDER BY m.ipk DESC) AS ipk_tertinggi_jurusan,
+  LAST_VALUE(m.ipk) OVER (PARTITION BY m.jurusan_id ORDER BY m.ipk DESC 
+    ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS ipk_terendah_jurusan,
+  AVG(m.ipk) OVER (PARTITION BY m.jurusan_id) AS rata_rata_jurusan,
+  COUNT(*) OVER (PARTITION BY m.jurusan_id) AS total_mahasiswa_jurusan
+FROM mahasiswa m
+JOIN jurusan j ON m.jurusan_id = j.id
+WHERE m.status = 'Aktif'
+ORDER BY j.nama_jurusan, ranking_jurusan;</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Mathematical Functions</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>SELECT 
+  d.nama,
+  d.gaji,
+  ROUND(d.gaji, 0) AS gaji_bulat,
+  CEILING(d.gaji / 1000000) AS gaji_juta_ceiling,
+  FLOOR(d.gaji / 1000000) AS gaji_juta_floor,
+  MOD(d.gaji, 1000000) AS sisa_gaji,
+  POWER(2, 3) AS contoh_power,
+  SQRT(d.gaji) AS akar_gaji,
+  ABS(-100) AS contoh_abs,
+  RAND() AS random_number,
+  PI() AS nilai_pi
+FROM dosen d;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Advanced SQL -->
+    <section id="advanced" class="card-hover bg-gray-800 p-6 rounded-lg shadow-xl">
+      <h2 class="text-3xl font-bold mb-6 text-indigo-400">🚀 Advanced SQL Techniques</h2>
+      
+      <div class="space-y-8">
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">CASE Statements Kompleks</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Analisis kompleks dengan CASE
+SELECT 
+  m.nim, m.nama, m.ipk, m.semester,
+  CASE 
+    WHEN m.ipk >= 3.75 THEN 'Summa Cum Laude'
+    WHEN m.ipk >= 3.50 THEN 'Magna Cum Laude'
+    WHEN m.ipk >= 3.25 THEN 'Cum Laude'
+    WHEN m.ipk >= 2.75 THEN 'Memuaskan'
+    WHEN m.ipk >= 2.00 THEN 'Cukup'
+    ELSE 'Kurang'
+  END AS predikat,
+  CASE 
+    WHEN m.semester <= 2 THEN 'Mahasiswa Baru'
+    WHEN m.semester <= 4 THEN 'Mahasiswa Muda'
+    WHEN m.semester <= 6 THEN 'Mahasiswa Senior'
+    WHEN m.semester <= 8 THEN 'Mahasiswa Tingkat Akhir'
+    ELSE 'Mahasiswa Lama'
+  END AS kategori_semester,
+  CASE 
+    WHEN EXISTS (
+      SELECT 1 FROM krs k2 
+      JOIN kelas kl ON k2.kelas_id = kl.id
+      WHERE k2.mahasiswa_id = m.id AND kl.semester_tahun = '2024/1'
+    ) THEN 'Aktif Kuliah'
+    ELSE 'Tidak Aktif'
+  END AS status_kuliah_sekarang
+FROM mahasiswa m
+WHERE m.status = 'Aktif'
+ORDER BY m.ipk DESC;</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">PIVOT dan Data Transformation</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Pivot nilai per mata kuliah (simulasi)
+SELECT 
+  m.nim, m.nama,
+  MAX(CASE WHEN mk.kode_mk = 'IF101' THEN krs.nilai_huruf END) AS IF101_Algoritma,
+  MAX(CASE WHEN mk.kode_mk = 'IF102' THEN krs.nilai_huruf END) AS IF102_StrukturData,
+  MAX(CASE WHEN mk.kode_mk = 'SI101' THEN krs.nilai_huruf END) AS SI101_Database,
+  COUNT(krs.id) AS total_mk_diambil,
+  AVG(CASE 
+    WHEN krs.nilai_huruf = 'A' THEN 4.00
+    WHEN krs.nilai_huruf = 'A-' THEN 3.75
+    WHEN krs.nilai_huruf = 'B+' THEN 3.50
+    WHEN krs.nilai_huruf = 'B' THEN 3.00
+    WHEN krs.nilai_huruf = 'B-' THEN 2.75
+    WHEN krs.nilai_huruf = 'C+' THEN 2.50
+    WHEN krs.nilai_huruf = 'C' THEN 2.00
+    ELSE 0
+  END) AS ipk_calculated
+FROM mahasiswa m
+LEFT JOIN krs ON m.id = krs.mahasiswa_id
+LEFT JOIN kelas k ON krs.kelas_id = k.id
+LEFT JOIN mata_kuliah mk ON k.mata_kuliah_id = mk.id
+WHERE m.status = 'Aktif' AND krs.status = 'Lulus'
+GROUP BY m.id, m.nim, m.nama
+ORDER BY m.nim;</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Dynamic SQL dan Conditional Logic</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Query dinamis berdasarkan kondisi
+SELECT 
+  'Statistik Mahasiswa' AS laporan_jenis,
+  j.nama_jurusan,
+  COUNT(*) AS total,
+  CASE 
+    WHEN @filter_type = 'ipk_tinggi' THEN 
+      COUNT(CASE WHEN m.ipk >= 3.50 THEN 1 END)
+    WHEN @filter_type = 'semester_akhir' THEN 
+      COUNT(CASE WHEN m.semester >= 7 THEN 1 END)
+    ELSE COUNT(*)
+  END AS filtered_count,
+  ROUND(
+    CASE 
+      WHEN @filter_type = 'ipk_tinggi' THEN 
+        (COUNT(CASE WHEN m.ipk >= 3.50 THEN 1 END) * 100.0 / COUNT(*))
+      WHEN @filter_type = 'semester_akhir' THEN 
+        (COUNT(CASE WHEN m.semester >= 7 THEN 1 END) * 100.0 / COUNT(*))
+      ELSE 100.0
+    END, 2
+  ) AS persentase
+FROM mahasiswa m
+JOIN jurusan j ON m.jurusan_id = j.id
+WHERE m.status = 'Aktif'
+GROUP BY j.id, j.nama_jurusan
+ORDER BY total DESC;</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">JSON Functions (MySQL 5.7+)</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Contoh penggunaan JSON (jika ada kolom JSON)
+-- Tambah kolom JSON untuk metadata mahasiswa
+ALTER TABLE mahasiswa ADD COLUMN metadata JSON;
+
+-- Insert data JSON
+UPDATE mahasiswa 
+SET metadata = JSON_OBJECT(
+  'hobi', JSON_ARRAY('membaca', 'olahraga', 'musik'),
+  'prestasi', JSON_OBJECT('lomba', 'juara 1', 'tahun', 2023),
+  'kontak_darurat', JSON_OBJECT('nama', 'Orang Tua', 'telepon', '081234567890')
+)
+WHERE id <= 5;
+
+-- Query JSON data
+SELECT 
+  m.nama,
+  JSON_EXTRACT(m.metadata, '$.hobi') AS hobi,
+  JSON_EXTRACT(m.metadata, '$.prestasi.lomba') AS prestasi_lomba,
+  JSON_EXTRACT(m.metadata, '$.kontak_darurat.nama') AS kontak_darurat,
+  JSON_LENGTH(JSON_EXTRACT(m.metadata, '$.hobi')) AS jumlah_hobi
+FROM mahasiswa m
+WHERE m.metadata IS NOT NULL;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Indexes -->
+    <section id="indexes" class="card-hover bg-gray-800 p-6 rounded-lg shadow-xl">
+      <h2 class="text-3xl font-bold mb-6 text-orange-400">📊 Index Optimization</h2>
+      
+      <div class="space-y-8">
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Membuat Index yang Efektif</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Index untuk performa query
+CREATE INDEX idx_mahasiswa_status_jurusan ON mahasiswa(status, jurusan_id);
+CREATE INDEX idx_mahasiswa_ipk_semester ON mahasiswa(ipk DESC, semester);
+CREATE INDEX idx_krs_mahasiswa_semester ON krs(mahasiswa_id, semester_tahun);
+CREATE INDEX idx_kelas_dosen_semester ON kelas(dosen_id, semester_tahun);
+
+-- Composite index untuk query kompleks
+CREATE INDEX idx_mahasiswa_complex ON mahasiswa(jurusan_id, status, ipk DESC, semester);
+
+-- Partial index (dengan kondisi)
+CREATE INDEX idx_mahasiswa_aktif ON mahasiswa(nama, ipk) WHERE status = 'Aktif';
+
+-- Full-text index untuk pencarian teks
+CREATE FULLTEXT INDEX idx_mahasiswa_fulltext ON mahasiswa(nama, alamat);
+
+-- Unique index untuk constraint
+CREATE UNIQUE INDEX idx_dosen_email_unique ON dosen(email);
+
+-- Index untuk foreign key
+CREATE INDEX idx_fk_mahasiswa_jurusan ON mahasiswa(jurusan_id);
+CREATE INDEX idx_fk_mahasiswa_dosen ON mahasiswa(dosen_pembimbing_id);</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Analisis dan Optimasi Index</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Melihat penggunaan index
+SHOW INDEX FROM mahasiswa;
+
+-- Menganalisis query dengan EXPLAIN
+EXPLAIN SELECT * FROM mahasiswa 
+WHERE status = 'Aktif' AND jurusan_id = 1 AND ipk > 3.0;
+
+-- Menghapus index yang tidak diperlukan
+DROP INDEX idx_mahasiswa_nama ON mahasiswa;
+
+-- Mengoptimalkan tabel setelah perubahan index
+OPTIMIZE TABLE mahasiswa;
+
+-- Melihat statistik index
+SHOW TABLE STATUS LIKE 'mahasiswa';
+
+-- Analyze table untuk update statistik
+ANALYZE TABLE mahasiswa;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Transactions -->
+    <section id="transactions" class="card-hover bg-gray-800 p-6 rounded-lg shadow-xl">
+      <h2 class="text-3xl font-bold mb-6 text-pink-400">🔒 Transactions dan Concurrency</h2>
+      
+      <div class="space-y-8">
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Transaction Management</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Basic Transaction
+START TRANSACTION;
+
+INSERT INTO mahasiswa (nim, nama, jurusan_id, tanggal_masuk)
+VALUES ('20240001', 'John Doe', 1, '2024-09-01');
+
+SET @mahasiswa_id = LAST_INSERT_ID();
+
+INSERT INTO krs (mahasiswa_id, kelas_id, semester_tahun)
+VALUES (@mahasiswa_id, 1, '2024/1'),
+       (@mahasiswa_id, 2, '2024/1');
+
+-- Cek apakah operasi berhasil
+IF @@ERROR = 0 THEN
+  COMMIT;
+ELSE
+  ROLLBACK;
+END IF;</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Savepoints dan Nested Transactions</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Transaction dengan savepoint
+START TRANSACTION;
+
+-- Insert mahasiswa baru
+INSERT INTO mahasiswa (nim, nama, jurusan_id, tanggal_masuk)
+VALUES ('20240002', 'Jane Smith', 1, '2024-09-01');
+
+SAVEPOINT after_mahasiswa_insert;
+
+-- Insert KRS
+INSERT INTO krs (mahasiswa_id, kelas_id, semester_tahun)
+VALUES (LAST_INSERT_ID(), 1, '2024/1');
+
+-- Jika ada error di KRS, rollback ke savepoint
+-- ROLLBACK TO SAVEPOINT after_mahasiswa_insert;
+
+-- Update IPK
+CALL HitungIPK(LAST_INSERT_ID());
+
+COMMIT;</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Isolation Levels</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>-- Set isolation level
+SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+-- SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+-- SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;
+-- SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+
+START TRANSACTION;
+
+-- Query dengan locking
+SELECT * FROM mahasiswa 
+WHERE jurusan_id = 1 
+FOR UPDATE; -- Exclusive lock
+
+-- Atau shared lock
+SELECT * FROM mahasiswa 
+WHERE jurusan_id = 1 
+LOCK IN SHARE MODE;
+
+COMMIT;</code></pre>
+        </div>
+
+        <div>
+          <h3 class="text-xl font-semibold mb-4 text-cyan-400">Error Handling dalam Stored Procedure</h3>
+<pre class="bg-gray-900 text-green-300 p-4 rounded overflow-auto border border-gray-700"><code>DELIMITER //
+CREATE PROCEDURE TransferMahasiswaJurusan(
+  IN mahasiswa_id_param INT,
+  IN jurusan_baru_id INT
+)
+BEGIN
+  DECLARE EXIT HANDLER FOR SQLEXCEPTION
+  BEGIN
+    ROLLBACK;
+    RESIGNAL;
+  END;
+  
+  START TRANSACTION;
+  
+  -- Validasi mahasiswa exists
+  IF NOT EXISTS (SELECT 1 FROM mahasiswa WHERE id = mahasiswa_id_param) THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Mahasiswa tidak ditemukan';
+  END IF;
+  
+  -- Validasi jurusan exists
+  IF NOT EXISTS (SELECT 1 FROM jurusan WHERE id = jurusan_baru_id) THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Jurusan tidak ditemukan';
+  END IF;
+  
+  -- Update jurusan mahasiswa
+  UPDATE mahasiswa 
+  SET jurusan_id = jurusan_baru_id,
+      dosen_pembimbing_id = NULL
+  WHERE id = mahasiswa_id_param;
+  
+  -- Assign dosen pembimbing baru
+  UPDATE mahasiswa 
+  SET dosen_pembimbing_id = (
+    SELECT d.id FROM dosen d 
+    WHERE d.jurusan_id = jurusan_baru_id 
+    ORDER BY RAND() LIMIT 1
+  )
+  WHERE id = mahasiswa_id_param;
+  
+  COMMIT;
+END //
+DELIMITER ;</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Performance Tips -->
+    <section class="card-hover bg-gray-800 p-6 rounded-lg shadow-xl">
+      <h2 class="text-3xl font-bold mb-6 text-green-400">⚡ Performance Tips & Best Practices</h2>
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-gray-900 p-4 rounded">
+          <h3 class="font-bold text-cyan-400 mb-3">Query Optimization</h3>
+          <ul class="space-y-2 text-sm text-gray-300">
+            <li>• Gunakan LIMIT untuk membatasi hasil</li>
+            <li>• Hindari SELECT * pada tabel besar</li>
+            <li>• Gunakan EXISTS daripada IN untuk subquery</li>
+            <li>• Buat index pada kolom yang sering di-filter</li>
+            <li>• Gunakan UNION ALL daripada UNION jika duplikat tidak masalah</li>
+          </ul>
+        </div>
+        
+        <div class="bg-gray-900 p-4 rounded">
+          <h3 class="font-bold text-cyan-400 mb-3">Index Strategy</h3>
+          <ul class="space-y-2 text-sm text-gray-300">
+            <li>• Index kolom yang sering di WHERE clause</li>
+            <li>• Composite index: kolom paling selektif di depan</li>
+            <li>• Jangan over-index (lambatkan INSERT/UPDATE)</li>
+            <li>• Monitor penggunaan index dengan EXPLAIN</li>
+            <li>• Drop index yang tidak terpakai</li>
+          </ul>
+        </div>
+        
+        <div class="bg-gray-900 p-4 rounded">
+          <h3 class="font-bold text-cyan-400 mb-3">JOIN Optimization</h3>
+          <ul class="space-y-2 text-sm text-gray-300">
+            <li>• Gunakan INNER JOIN jika memungkinkan</li>
+            <li>• Filter di WHERE clause untuk INNER JOIN</li>
+            <li>• Filter di ON clause untuk OUTER JOIN</li>
+            <li>• Urutan JOIN mempengaruhi performa</li>
+            <li>• Gunakan alias untuk readability</li>
+          </ul>
+        </div>
+        
+        <div class="bg-gray-900 p-4 rounded">
+          <h3 class="font-bold text-cyan-400 mb-3">Database Design</h3>
+          <ul class="space-y-2 text-sm text-gray-300">
+            <li>• Normalisasi untuk mengurangi redundansi</li>
+            <li>• Denormalisasi untuk performa baca</li>
+            <li>• Gunakan tipe data yang tepat</li>
+            <li>• Constraint untuk integritas data</li>
+            <li>• Partitioning untuk tabel besar</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="gradient-bg text-white p-8 text-center border-t border-gray-700">
+    <div class="max-w-6xl mx-auto">
+      <p class="text-lg mb-2">&copy; 2025 | S N O O Z E X</p>
+      <p class="text-gray-300">Semakin kamu tau, semakin kamu tidak tau</p>
+      <div class="mt-4 flex justify-center space-x-4">
+        <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">MySQL</span>
+        <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">PostgreSQL</span>
+        <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">SQL Server</span>
+        <span class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">Oracle</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+
+    // Add intersection observer for navigation highlighting
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          navLinks.forEach(link => {
+            link.classList.remove('text-yellow-400');
+            link.classList.add('text-blue-400');
+            if (link.getAttribute('href') === `#${entry.target.id}`) {
+              link.classList.remove('text-blue-400');
+              link.classList.add('text-yellow-400');
+            }
+          });
+        }
+      });
+    }, { threshold: 0.3 });
+
+    sections.forEach(section => observer.observe(section));
+
+    // Copy code functionality
+    document.querySelectorAll('pre code').forEach(block => {
+      const button = document.createElement('button');
+      button.className = 'absolute top-2 right-2 bg-gray-700 hover:bg-gray-600 text-white px-2 py-1 rounded text-xs opacity-75 hover:opacity-100';
+      button.textContent = 'Copy';
+      
+      const pre = block.parentElement;
+      pre.style.position = 'relative';
+      pre.appendChild(button);
+      
+      button.addEventListener('click', () => {
+        navigator.clipboard.writeText(block.textContent).then(() => {
+          button.textContent = 'Copied!';
+          setTimeout(() => button.textContent = 'Copy', 2000);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
