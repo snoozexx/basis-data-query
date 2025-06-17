@@ -85,7 +85,8 @@ ALTER TABLE nama_tabel ADD CONSTRAINT nama_lain FOREIGN KEY (id_fk_ditabel) REFE
  SELECT * FROM nama_tabel;                                      (untuk melihat semua data)
  SELECT * FROM nama_tabel WHERE jenis_kendaraan = 'mobil';      (melihat data dengan filter)  
  SELECT nama_field, nama_field FROM nama_tabel;                 (melihat data dengan tampilan tertentu)
- SELECT mahasiswa.nama_mhs, transaksi_nilai.nilai_akhir from transaksi_nilai join mahasiswa on transaksi_nilai.id_mhs = mahasiswa.Id_mhs;
+ SELECT mahasiswa.nama_mhs, transaksi_nilai.nilai_akhir 
+ FROM transaksi_nilai JOIN mahasiswa ON transaksi_nilai.id_mhs = mahasiswa.Id_mhs;
  (melihat data tampilan tertentu dengan join tabel)
 
 • Menambahkan data
