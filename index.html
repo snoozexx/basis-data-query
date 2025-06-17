@@ -33,17 +33,17 @@
 <code>
 ---------------DATABASE-----------------
 • Membuat Database Baru
--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------
  CREATE DATABASE nama_database;
 
 • Menggunakan Database
--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------
   USE nama_database;
 
 
 -----------------TABLE------------------
 • Membuat Tabel Baru
--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------
 CREATE TABLE jenis_kendaraan (
   id VARCHAR (10) PRIMARY KEY UNIQUE NOT NULL,
   nama_jenis VARCHAR (50) NOT NULL
@@ -60,13 +60,15 @@ CREATE TABLE kendaraan_rodhi (
 
 
 • Mengubah Nama Field di Tabel Tertentu
--------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------
             nama table              field lama    field baru      tipe data
 ALTER TABLE kendaraan_rodhi CHANGE jeni_kendaraan jenis_kendaraan VARCHAR (10) NOT NULL;
 
-- menambahkan relasi ke id foreign key
-ALTER TABLE nama_tabel ADD FOREIGN KEY (id_fk_ditabel) REFERENCES nama_tabel_relasi(id_tabel_relasi);
-ALTER TABLE nama_tabel ADD CONSTRAINT nama_lain FOREIGN KEY (id_fk_ditabel) REFERENCES nama_tabel_relasi(id_tabel_relasi);
+• menambahkan relasi ke id foreign key
+--------------------------------------------------------------------------------------------------------------
+- ALTER TABLE nama_tabel ADD FOREIGN KEY (id_fk_ditabel) REFERENCES nama_tabel_relasi(id_tabel_relasi);
+- ALTER TABLE nama_tabel ADD CONSTRAINT nama_lain FOREIGN KEY (id_fk_ditabel) 
+    REFERENCES nama_tabel_relasi(id_tabel_relasi);
 </code> 
             </pre>
           </div>
@@ -82,12 +84,12 @@ ALTER TABLE nama_tabel ADD CONSTRAINT nama_lain FOREIGN KEY (id_fk_ditabel) REFE
 <code>
 • Melihat data
 --------------------------------------------------------------------------------------------------------------
- SELECT * FROM nama_tabel;                                      (untuk melihat semua data)
- SELECT * FROM nama_tabel WHERE jenis_kendaraan = 'mobil';      (melihat data dengan filter)  
- SELECT nama_field, nama_field FROM nama_tabel;                 (melihat data dengan tampilan tertentu)
- SELECT mahasiswa.nama_mhs, transaksi_nilai.nilai_akhir 
- FROM transaksi_nilai JOIN mahasiswa ON transaksi_nilai.id_mhs = mahasiswa.Id_mhs;
- (melihat data tampilan tertentu dengan join tabel)
+ - SELECT * FROM nama_tabel;                                      (untuk melihat semua data)
+ - SELECT * FROM nama_tabel WHERE jenis_kendaraan = 'mobil';      (melihat data dengan filter)  
+ - SELECT nama_field, nama_field FROM nama_tabel;                 (melihat data dengan tampilan tertentu)
+ - SELECT mahasiswa.nama_mhs, transaksi_nilai.nilai_akhir 
+    FROM transaksi_nilai JOIN mahasiswa ON transaksi_nilai.id_mhs = mahasiswa.Id_mhs;
+    (melihat data tampilan tertentu dengan join tabel)
 
 • Menambahkan data
 --------------------------------------------------------------------------------------------------------------
