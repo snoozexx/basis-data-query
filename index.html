@@ -111,6 +111,17 @@ UPDATE nama_tabel SET nama_kolom = nilai_baru, kolom_lain = nilai_baru WHERE id 
 --------------------------------------------------------------------------------------------------------------
 DELETE FROM nama_tabel WHERE plat_nomor = 'B7654FWA';
 
+• Search Data
+--------------------------------------------------------------------------------------------------------------
+- SELECT * FROM pelanggan WHERE nama = 'Andi'; (Mencari berdasarkan nilai yang persis sama)
+- SELECT * FROM pelanggan WHERE nama LIKE '%an%'; (Mencari berdasarkan sebagian kata (partial match))
+- SELECT * FROM pelanggan WHERE nama LIKE '%an%' AND kota = 'pasuruan';
+    (Search lebih dari satu kolom (multi-kriteria))
+- SELECT * FROM pelanggan WHERE nama LIKE '%an%' OR nama LIKE '%ri%';  
+    (Mencari pelanggan yang namanya mengandung an atau ri.)
+
+
+
 
 </code>
             </pre>
