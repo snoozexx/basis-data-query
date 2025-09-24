@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dokumentasi SQL</title>
+  <title>Dokumentasi SQL & Dotnet CLI</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -14,22 +14,23 @@
 <body class="bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100">
 
   <div class="flex">
+    <!-- Sidebar -->
     <aside class="w-64 bg-gray-100 dark:bg-gray-800 h-screen px-6 py-8 sticky top-0 overflow-y-auto">
-      <h1 class="text-2xl font-bold mb-6">SQL Docs</h1>
+      <h1 class="text-2xl font-bold mb-6">Docs</h1>
       <nav class="space-y-2 text-sm">
         <a href="#ddl" class="block px-3 py-2 rounded hover:bg-blue-100 dark:hover:bg-gray-700">DDL</a>
         <a href="#dml" class="block px-3 py-2 rounded hover:bg-blue-100 dark:hover:bg-gray-700">DML & CRUD</a>
+        <a href="#dotnet" class="block px-3 py-2 rounded hover:bg-blue-100 dark:hover:bg-gray-700">Dotnet CLI</a>
         <a href="#tips" class="block px-3 py-2 rounded hover:bg-blue-100 dark:hover:bg-gray-700">Tips</a>
       </nav>
     </aside>
 
+    <!-- Main Content -->
     <main class="flex-1 p-10 space-y-16">
+      <!-- ================== SQL DDL ================== -->
       <section id="ddl">
         <h2 class="text-3xl font-bold mb-4 border-b border-gray-300 pb-2">🏗️ DDL (Data Definition Language)</h2>
-        <div class="space-y-6">
-          <div>
-            <h3 class="text-xl font-semibold">CRUD Database dan Tabel</h3>
-            <pre class="bg-gray-800 text-green-300 p-4 rounded overflow-auto text-sm">
+        <pre class="bg-gray-800 text-green-300 p-4 rounded overflow-auto text-sm">
 <code>
 ---------------DATABASE-----------------
 • Membuat Database Baru
@@ -54,7 +55,7 @@ CREATE TABLE jenis_kendaraan (
 );
 
 CREATE TABLE kendaraan_rodhi (
-  plat_nomor VARCHAR (8) PRIMARY KEY UNIQUE NOT NULL, #AUTO INCREMENT
+  plat_nomor VARCHAR (8) PRIMARY KEY UNIQUE NOT NULL,
   nama_kendaraan VARCHAR (25) NOT NULL,
   id_jenis_kendaraan VARCHAR (10) NOT NULL,
   keterangan VARCHAR (250),
@@ -62,46 +63,38 @@ CREATE TABLE kendaraan_rodhi (
   FOREIGN KEY (id_jenis_kendaraan) REFERENCES jenis_kendaraan(id) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
-
 • Mengubah Nama Field di Tabel Tertentu
 --------------------------------------------------------------------------------------------------------------
-            nama table              field lama    field baru      tipe data
 ALTER TABLE kendaraan_rodhi CHANGE jeni_kendaraan jenis_kendaraan VARCHAR (10) NOT NULL;
 
-• menambahkan relasi ke id foreign key
+• Menambahkan Relasi ke Foreign Key
 --------------------------------------------------------------------------------------------------------------
-- ALTER TABLE nama_tabel ADD FOREIGN KEY (id_fk_ditabel) REFERENCES nama_tabel_relasi(id_tabel_relasi);
-- ALTER TABLE nama_tabel ADD CONSTRAINT nama_lain FOREIGN KEY (id_fk_ditabel) 
+ALTER TABLE nama_tabel ADD FOREIGN KEY (id_fk_ditabel) REFERENCES nama_tabel_relasi(id_tabel_relasi);
+ALTER TABLE nama_tabel ADD CONSTRAINT nama_lain FOREIGN KEY (id_fk_ditabel) 
     REFERENCES nama_tabel_relasi(id_tabel_relasi);
-</code> 
-            </pre>
-          </div>
-        </div>
+</code>
+        </pre>
       </section>
 
+      <!-- ================== SQL DML ================== -->
       <section id="dml">
         <h2 class="text-3xl font-bold mb-4 border-b border-gray-300 pb-2">📝 DML (Data Manipulation Language)</h2>
-        <div class="space-y-6">
-          <div>
-            <h3 class="text-xl font-semibold">Manipulasi Data</h3>
-            <pre class="bg-gray-800 text-green-300 p-4 rounded overflow-auto text-sm">
+        <pre class="bg-gray-800 text-green-300 p-4 rounded overflow-auto text-sm">
 <code>
 • Melihat data
 --------------------------------------------------------------------------------------------------------------
- - SELECT * FROM nama_tabel;                                      (untuk melihat semua data)
- - SELECT * FROM nama_tabel WHERE jenis_kendaraan = 'mobil';      (melihat data dengan filter)  
- - SELECT nama_field, nama_field FROM nama_tabel;                 (melihat data dengan tampilan tertentu)
- - SELECT mahasiswa.nama_mhs, transaksi_nilai.nilai_akhir 
-    FROM transaksi_nilai JOIN mahasiswa ON transaksi_nilai.id_mhs = mahasiswa.Id_mhs;
-    (melihat data tampilan tertentu dengan join tabel)
+SELECT * FROM nama_tabel; 
+SELECT * FROM nama_tabel WHERE jenis_kendaraan = 'mobil';  
+SELECT nama_field, nama_field FROM nama_tabel;  
+SELECT mahasiswa.nama_mhs, transaksi_nilai.nilai_akhir 
+  FROM transaksi_nilai JOIN mahasiswa ON transaksi_nilai.id_mhs = mahasiswa.Id_mhs;
 
 • Menambahkan data
 --------------------------------------------------------------------------------------------------------------
 INSERT INTO kendaraan_rodhi(plat_nomor, nama_kendaraan, jenis_kendaraan, keterangan, kondisi_akhir) VALUES
   ('B7654FWA', 'BMW M4', 'Mobil', NULL, 'Baik'),
   ('N3456FGA', 'BMW M4', 'Mobil', 'Kredit 1 tahun', 'Rusak'),
-  ('AA7654KD', 'BMW M3', 'Mobil', NULL, 'Baik')
-;
+  ('AA7654KD', 'BMW M3', 'Mobil', NULL, 'Baik');
 
 • Mengubah/Mengedit Data
 --------------------------------------------------------------------------------------------------------------
@@ -113,42 +106,95 @@ DELETE FROM nama_tabel WHERE plat_nomor = 'B7654FWA';
 
 • Search Data
 --------------------------------------------------------------------------------------------------------------
-- SELECT * FROM pelanggan WHERE nama = 'Andi'; (Mencari berdasarkan nilai yang persis sama)
-- SELECT * FROM pelanggan WHERE nama LIKE '%an%'; (Mencari berdasarkan sebagian kata (partial match))
-- SELECT * FROM pelanggan WHERE nama LIKE '%an%' AND kota = 'pasuruan';
-    (Search lebih dari satu kolom (multi-kriteria))
-- SELECT * FROM pelanggan WHERE nama LIKE '%an%' OR nama LIKE '%ri%';  
-    (Mencari pelanggan yang namanya mengandung an atau ri.)
-
-
-
-
+SELECT * FROM pelanggan WHERE nama = 'Andi'; 
+SELECT * FROM pelanggan WHERE nama LIKE '%an%'; 
+SELECT * FROM pelanggan WHERE nama LIKE '%an%' AND kota = 'pasuruan'; 
+SELECT * FROM pelanggan WHERE nama LIKE '%an%' OR nama LIKE '%ri%';
 </code>
-            </pre>
-          </div>
-        </div>
+        </pre>
       </section>
 
+      <!-- ================== DOTNET CLI ================== -->
+      <section id="dotnet">
+        <h2 class="text-3xl font-bold mb-4 border-b border-gray-300 pb-2">⚙️ Dotnet CLI Commands</h2>
+        <pre class="bg-gray-800 text-green-300 p-4 rounded overflow-auto text-sm">
+<code>
+--------------- INFO -----------------
+dotnet --version                # Cek versi SDK
+dotnet --info                   # Info detail SDK & runtime
+dotnet --list-sdks              # Daftar SDK
+dotnet --list-runtimes          # Daftar runtime
+
+--------------- NEW PROJECT -----------------
+dotnet new console -n MyApp     # Console App
+dotnet new webapi -n MyApi      # Web API
+dotnet new mvc -n MyMvc         # ASP.NET MVC
+dotnet new classlib -n MyLib    # Class Library
+dotnet new sln -n MySolution    # Solution
+
+--------------- BUILD & RUN -----------------
+dotnet build                    # Build project
+dotnet run                      # Jalankan aplikasi
+dotnet watch run                # Jalankan + reload otomatis
+dotnet test                     # Jalankan unit test
+dotnet publish -c Release -o out # Publish untuk deploy
+
+--------------- SOLUTION & REFERENCE -----------------
+dotnet sln add MyApp/MyApp.csproj
+dotnet sln remove MyApp/MyApp.csproj
+dotnet add reference ../MyLib/MyLib.csproj
+dotnet remove reference ../MyLib/MyLib.csproj
+
+--------------- NUGET PACKAGE -----------------
+dotnet add package Nama.Paket
+dotnet add package Nama.Paket --version 6.0.0
+dotnet remove package Nama.Paket
+dotnet restore
+
+--------------- ENTITY FRAMEWORK CORE -----------------
+dotnet tool install -g dotnet-ef              # Install EF Tool
+dotnet ef migrations add InitialCreate        # Buat migration baru
+dotnet ef migrations add UpdateSchema         # Tambah migration baru
+dotnet ef migrations remove                   # Hapus migration terakhir
+dotnet ef migrations list                     # Daftar migration
+dotnet ef database update                     # Apply migration ke DB
+dotnet ef database drop                       # Drop database
+dotnet ef dbcontext info                      # Info DbContext
+dotnet ef dbcontext scaffold "conn" Microsoft.EntityFrameworkCore.SqlServer -o Models
+                                              # Generate model dari database
+
+--------------- GLOBAL TOOLS -----------------
+dotnet tool list -g
+dotnet tool update -g dotnet-ef
+dotnet tool uninstall -g dotnet-ef
+</code>
+        </pre>
+      </section>
+
+      <!-- ================== TIPS ================== -->
       <section id="tips">
         <h2 class="text-3xl font-bold mb-4 border-b border-gray-300 pb-2">⚡ Tips</h2>
         <div class="grid md:grid-cols-2 gap-6 text-sm">
           <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded">
-            <h3 class="font-semibold text-cyan-400 mb-2">-</h3>
+            <h3 class="font-semibold text-cyan-400 mb-2">SQL</h3>
             <ul class="list-disc ml-5 space-y-1">
-              <li>-</li>
+              <li>Gunakan indeks untuk mempercepat query SELECT dengan filter.</li>
+              <li>Selalu tentukan tipe data yang sesuai agar hemat storage.</li>
+              <li>Gunakan FOREIGN KEY untuk menjaga integritas data.</li>
             </ul>
           </div>
 
           <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded">
-            <h3 class="font-semibold text-cyan-400 mb-2">Index Strategy</h3>
+            <h3 class="font-semibold text-cyan-400 mb-2">Dotnet CLI</h3>
             <ul class="list-disc ml-5 space-y-1">
-              <li>-</li>
+              <li>Gunakan <code>dotnet watch run</code> saat development biar auto-reload.</li>
+              <li>Simpan dependency dengan <code>dotnet restore</code> jika pindah mesin.</li>
+              <li>Gunakan migration step by step agar skema database selalu sinkron.</li>
             </ul>
           </div>
         </div>
       </section>
     </main>
   </div>
-
 </body>
 </html>
